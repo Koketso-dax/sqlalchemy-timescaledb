@@ -53,6 +53,17 @@ class TimescaledbDDLCompiler(PGDDLCompiler):
             """
         )
 
+    @staticmethod
+    def show_chunks(table_name, **kwargs):
+        conditions = []
+        for key, value in kwargs.items():
+            if isinstance(value, str):
+                value = f"'{value}'"
+            conditions.append(f"{key} => {value}")
+        conditions_str = ', '.join(conditions)
+        return DDL(f"SELECT show_chunks('{table_name}'\
+                   {', ' + conditions_str if conditions else ''})")
+
 
 class TimescaledbDialect:
     name = 'timescaledb'
